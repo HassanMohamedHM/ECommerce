@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECommerce.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,9 +9,10 @@ namespace ECommerce.Controllers
 {
     public class HomeController : Controller
     {
+        ECommerceContext db = new ECommerceContext();
         public ActionResult Index()
         {
-            return View();
+            return View(db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name));
         }
 
         public ActionResult About()

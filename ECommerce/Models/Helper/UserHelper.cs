@@ -66,7 +66,7 @@ namespace ECommerce.Models.Helper
                 Email = email,
                 UserName = email
             };
-            userManager.Create(UserASP);
+            userManager.Create(UserASP,email);
             userManager.AddToRole(UserASP.Id, roleName);
         }
         public static void CreateUserASP(string email, string roleName, string password)

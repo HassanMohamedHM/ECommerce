@@ -1,117 +1,112 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using ECommerce.Models;
 
 namespace ECommerce.Controllers
 {
-    [Authorize(Roles = "Admin")]
-    public class DepartmentsController : Controller
+    [Authorize(Roles ="User")]
+    public class TaxesController : Controller
     {
         private ECommerceContext db = new ECommerceContext();
 
-        // GET: Departments
         public ActionResult Index()
         {
-            return View(db.Departments.ToList());
+            var user = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var taxes = db.Taxes.Where(t => t.CompanyId == user.CompanyId);
+            return View(taxes.ToList());
         }
-
-        // GET: Departments/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            Tax tax = db.Taxes.Find(id);
+            if (tax == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(tax);
         }
-
-        // GET: Departments/Create
+        
         public ActionResult Create()
         {
-            return View();
+            var user = db.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            if (user == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            var tax = new Tax() {CompanyId=user.CompanyId };
+            return View(tax);
         }
 
-        // POST: Departments/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "DepartmentId,Name")] Department department)
+        public ActionResult Create(Tax tax)
         {
             if (ModelState.IsValid)
             {
-                db.Departments.Add(department);
+                db.Taxes.Add(tax);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            return View(department);
+            
+            return View(tax);
         }
-
-        // GET: Departments/Edit/5
+        
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            Tax tax = db.Taxes.Find(id);
+            if (tax == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(tax);
         }
 
-        // POST: Departments/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "DepartmentId,Name")] Department department)
+        public ActionResult Edit( Tax tax)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(department).State = EntityState.Modified;
+                db.Entry(tax).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(department);
+            return View(tax);
         }
 
-        // GET: Departments/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Department department = db.Departments.Find(id);
-            if (department == null)
+            Tax tax = db.Taxes.Find(id);
+            if (tax == null)
             {
                 return HttpNotFound();
             }
-            return View(department);
+            return View(tax);
         }
 
-        // POST: Departments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Department department = db.Departments.Find(id);
-            db.Departments.Remove(department);
+            Tax tax = db.Taxes.Find(id);
+            db.Taxes.Remove(tax);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

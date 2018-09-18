@@ -12,6 +12,7 @@ using static ECommerce.Models.Helper.UserHelper;
 
 namespace ECommerce.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         private ECommerceContext db = new ECommerceContext();
